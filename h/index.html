@@ -68,6 +68,9 @@ h2 em{font-style:normal;color:var(--accent)}
 .key{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:10px 4px;text-align:center}
 .key b{display:block;font-size:15px;font-weight:800;line-height:1.25}
 .key span{display:block;font-size:11px;color:#c9d1dd;margin-top:2px;line-height:1.3}
+.gift{margin-top:14px;background:linear-gradient(90deg,#c0392b,#e05a48);color:#fff;border-radius:12px;padding:12px 14px;text-align:center;box-shadow:0 6px 18px rgba(192,57,43,.35)}
+.gift b{display:block;font-size:18px;font-weight:900;letter-spacing:-.02em}
+.gift small{display:block;font-size:11.5px;opacity:.9;margin-top:2px}
 .fine{font-size:10.5px;color:#9aa5b6;margin-top:10px;line-height:1.45}
 
 /* agent + quick form */
@@ -220,6 +223,7 @@ footer summary{cursor:pointer;color:#c4ccd8}
       <div class="key"><b>트리플노선</b><span>도보권</span></div>
     </div>
     <p class="fine">84A 10층 이상 분양가 7억 8,300만원 기준(확장비 별도), 동·호수별 상이 · 전매는 당첨자발표일로부터 6개월 뒤 가능 · 세부 조건은 입주자 모집공고 기준</p>
+    <div class="gift"><b>🎁 계약 축하 상품권 100만원 지급</b><small>계약 완료 고객 대상 · 지급 시기와 조건은 상담 시 안내</small></div>
   </div>
 </div>
 
@@ -259,7 +263,7 @@ footer summary{cursor:pointer;color:#c4ccd8}
   </div>
 </div>
 
-<section>
+<section id="budget">
   <div class="wrap">
     <span class="ey">MY BUDGET</span>
     <h2>내 돈으로<br><em>계약 가능할까?</em></h2>
@@ -287,7 +291,7 @@ footer summary{cursor:pointer;color:#c4ccd8}
   </div>
 </section>
 
-<section>
+<section id="price">
   <div class="wrap">
     <span class="ey">PRICE CHECK</span>
     <h2>신축인데,<br>주변시세 대비 <em>1억 이상 저렴</em></h2>
@@ -304,7 +308,7 @@ footer summary{cursor:pointer;color:#c4ccd8}
   </div>
 </section>
 
-<section>
+<section id="location">
   <div class="wrap">
     <span class="ey">WHY HERITAGE XI</span>
     <h2>이 단지를<br>봐야 하는 <em>5가지</em> 이유</h2>
@@ -320,7 +324,7 @@ footer summary{cursor:pointer;color:#c4ccd8}
   </div>
 </section>
 
-<section>
+<section id="video">
   <div class="wrap">
     <span class="ey">30 SEC</span>
     <h2>북부대공이 고른 <em>영지</em></h2>
@@ -331,7 +335,7 @@ footer summary{cursor:pointer;color:#c4ccd8}
   </div>
 </section>
 
-<section>
+<section id="types">
   <div class="wrap">
     <span class="ey">UNIT TYPES</span>
     <h2>평면도·분양가,<br><em>평형별로 받아보기</em></h2>
@@ -360,6 +364,7 @@ footer summary{cursor:pointer;color:#c4ccd8}
     <span class="ey" style="color:var(--accent2)">LAST STEP</span>
     <h2>내 조건에 맞는 평형·금액,<br><em>상담으로 정확하게</em></h2>
     <p class="sub">동·호수와 층에 따라 금액이 달라, 남겨주시면 현장 상담사가 직접 연락드립니다.</p>
+    <div class="gift" style="margin-top:16px"><b>🎁 계약 축하 상품권 100만원 지급</b><small>계약 완료 고객 대상 · 지급 시기와 조건은 상담 시 안내</small></div>
     <div class="quick">
       <div class="agent"><div class="av">☎</div><div><b>오산헤리티지자이 현장 상담</b><span>남겨주시면 상담사가 직접 연락드립니다</span></div></div>
       <form class="lead" novalidate>
@@ -429,7 +434,21 @@ const CONFIG = {
 /* ================ */
 
 const tel = CONFIG.PHONE.replace(/[^0-9]/g,"");
-document.querySelectorAll(".js-tel").forEach(a=>{ a.href = "tel:" + tel; a.addEventListener("click",()=>track("call")); });
+document.querySelectorAll(".js-tel").forEach(a=>{ a.href = "tel:" + tel; a.addEventListener("click",()=>{ track("call"); callPing(a); }); });
+/* 전화 버튼 클릭 → 시트 '전화클릭' 탭 + 슬랙 알림 */
+let lastPing = 0;
+function callPing(a){
+  try{
+    const now = Date.now(); if (now - lastPing < 3000) return; lastPing = now;
+    const q = new URLSearchParams(sessionStorage.getItem("lp_params") || location.search);
+    const where = a.closest(".fix") ? "하단 고정바" : a.closest(".quick") ? "상담폼 옆" : a.closest("footer") ? "맨 아래" : "상단";
+    const body = new URLSearchParams({ event:"call_click", site:CONFIG.SITE, phone_shown:CONFIG.PHONE, where,
+      n_keyword: q.get("n_keyword") || q.get("n_query") || q.get("utm_term") || "",
+      n_media: q.get("n_media") || q.get("utm_source") || "", params: q.toString(), page: location.pathname });
+    if (!(navigator.sendBeacon && navigator.sendBeacon(CONFIG.SHEET_ENDPOINT, body)))
+      fetch(CONFIG.SHEET_ENDPOINT, { method:"POST", mode:"no-cors", keepalive:true, body });
+  }catch(e){}
+}
 document.querySelectorAll(".js-tel-text").forEach(a=>{ a.textContent = CONFIG.PHONE; });
 
 /* 유입 파라미터 보관 */
