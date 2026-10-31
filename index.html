@@ -95,6 +95,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 
 .submit{margin-top:10px;font-size:18px;padding:17px}
 .submit[disabled]{opacity:.6;cursor:wait}
 .qcall{display:block;text-align:center;margin-top:12px;font-size:14px;font-weight:700;color:var(--dark);text-decoration:none}
+.dialnote{text-align:center;font-size:12px;color:var(--muted);margin-top:4px}
 .trust{display:flex;justify-content:center;gap:12px;margin-top:10px;font-size:11.5px;color:var(--muted)}
 .msg{margin-top:10px;font-size:14px;font-weight:700;text-align:center;display:none}
 .msg.err{color:var(--err);display:block}
@@ -246,6 +247,7 @@ footer summary{cursor:pointer;color:#c4ccd8}
         <p class="msg" role="status"></p>
         <div class="trust"><span>🔒 상담 외 사용 안 함</span><span>📋 입력 10초</span></div>
         <a class="qcall js-tel" href="#">📞 바로 통화하기 <span class="js-tel-text"></span></a>
+        <p class="dialnote">버튼을 누르면 담당 상담사 직통번호로 바로 연결됩니다</p>
       </form>
       <div class="done">
         <div class="ck">✓</div>
@@ -380,6 +382,7 @@ footer summary{cursor:pointer;color:#c4ccd8}
         <p class="msg" role="status"></p>
         <div class="trust"><span>🔒 상담 외 사용 안 함</span><span>📋 입력 10초</span></div>
         <a class="qcall js-tel" href="#">📞 바로 통화하기 <span class="js-tel-text"></span></a>
+        <p class="dialnote">버튼을 누르면 담당 상담사 직통번호로 바로 연결됩니다</p>
       </form>
       <div class="done">
         <div class="ck">✓</div>
@@ -401,7 +404,7 @@ footer summary{cursor:pointer;color:#c4ccd8}
 <footer>
   <div class="wrap">
     <b>오산헤리티지자이 분양 상담 안내</b><br>
-    분양 상담전화 <a class="js-tel js-tel-text" href="#">1599-8954</a><br>
+    분양 상담전화 <a class="js-tel js-tel-text" href="#">1688-7038</a> (누르면 담당 상담사 직통 연결)<br>
     광고대행 제이에이치테크 · 대표 박종영 · 사업자등록번호 298-47-00577
     <details id="privacy">
       <summary>개인정보 수집·이용 안내</summary>
@@ -426,13 +429,14 @@ footer summary{cursor:pointer;color:#c4ccd8}
 /* ===== 설정 ===== */
 const CONFIG = {
   SHEET_ENDPOINT: "https://script.google.com/macros/s/AKfycbxWzAwM7iIVnSmjOpAm5roO4OpLE_RKDX-rBACcwdmNBoXsg8YnDLuXwXFx-otNaL97pQ/exec",
-  PHONE: "1599-8954",
+  PHONE: "1688-7038",      // 화면 표시 번호
+  DIAL: "1599-8954",        // 눌렀을 때 실제로 걸리는 번호
   SITE: "오산헤리티지자이_1551",
   VARIANT: "A_price"
 };
 /* ================ */
 
-const tel = CONFIG.PHONE.replace(/[^0-9]/g,"");
+const tel = (CONFIG.DIAL || CONFIG.PHONE).replace(/[^0-9]/g,"");
 document.querySelectorAll(".js-tel").forEach(a=>{ a.href = "tel:" + tel; a.addEventListener("click",()=>{ track("call"); callPing(a); }); });
 /* 전화 버튼 클릭 → 시트 '전화클릭' 탭 + 슬랙 알림 */
 let lastPing = 0;
@@ -441,7 +445,7 @@ function callPing(a){
     const now = Date.now(); if (now - lastPing < 3000) return; lastPing = now;
     const q = new URLSearchParams(sessionStorage.getItem("lp_params") || location.search);
     const where = a.closest(".fix") ? "하단 고정바" : a.closest(".quick") ? "상담폼 옆" : a.closest("footer") ? "맨 아래" : "상단";
-    const body = new URLSearchParams({ event:"call_click", site:CONFIG.SITE, phone_shown:CONFIG.PHONE, where,
+    const body = new URLSearchParams({ event:"call_click", site:CONFIG.SITE, phone_shown:CONFIG.PHONE, phone_dial:CONFIG.DIAL, where,
       n_keyword: q.get("n_keyword") || q.get("n_query") || q.get("utm_term") || "",
       n_media: q.get("n_media") || q.get("utm_source") || "", params: q.toString(), page: location.pathname });
     if (!(navigator.sendBeacon && navigator.sendBeacon(CONFIG.SHEET_ENDPOINT, body)))
