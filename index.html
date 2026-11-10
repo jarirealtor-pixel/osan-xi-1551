@@ -71,6 +71,13 @@ h2 em{font-style:normal;color:var(--accent)}
 .gift{margin-top:14px;background:linear-gradient(90deg,#c0392b,#e05a48);color:#fff;border-radius:12px;padding:12px 14px;text-align:center;box-shadow:0 6px 18px rgba(192,57,43,.35)}
 .gift b{display:block;font-size:18px;font-weight:900;letter-spacing:-.02em}
 .gift small{display:block;font-size:11.5px;opacity:.9;margin-top:2px}
+.gifts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.gifts .gift{margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:12px 8px}
+.gifts .gift b{font-size:15px;line-height:1.3}
+.gift .gi{font-size:24px;line-height:1}
+.gift.g1{background:linear-gradient(135deg,#5b1a2b,#8e2b45);box-shadow:0 6px 18px rgba(91,26,43,.35)}
+.gnote{font-size:11px;color:#c9d1dd;text-align:center;margin-top:6px}
+.final .gnote{color:#c4ccd8}
 .fine{font-size:10.5px;color:#9aa5b6;margin-top:10px;line-height:1.45}
 
 /* agent + quick form */
@@ -225,7 +232,11 @@ footer summary{cursor:pointer;color:#c4ccd8}
       <div class="key"><b>트리플노선</b><span>도보권</span></div>
     </div>
     <p class="fine">분양가: 84A 10층 이상 7억 8,300만원 + 발코니 확장 1,990만원(분양 자료) · 안전마진은 아이파크 대비 기준 · 향후 가격을 보장하지 않음</p>
-    <div class="gift"><b>🎁 계약 축하 상품권 100만원 지급</b><small>계약 완료 고객 대상 · 지급 시기와 조건은 상담 시 안내</small></div>
+    <div class="gifts">
+      <div class="gift g1"><span class="gi">🍷</span><b>모델하우스 예약 방문 시<br>고급 와인 증정</b></div>
+      <div class="gift g2"><span class="gi">🎁</span><b>계약 시<br>상품권 100만원 증정</b></div>
+    </div>
+    <p class="gnote">예약 방문·계약 완료 고객 대상 · 증정 조건은 상담 시 안내</p>
   </div>
 </div>
 
@@ -365,7 +376,10 @@ footer summary{cursor:pointer;color:#c4ccd8}
     <span class="ey" style="color:var(--accent2)">LAST STEP</span>
     <h2>내 조건에 맞는 평형·금액,<br><em>상담으로 정확하게</em></h2>
     <p class="sub">동·호수와 층에 따라 금액이 달라, 남겨주시면 현장 상담사가 직접 연락드립니다.</p>
-    <div class="gift" style="margin-top:16px"><b>🎁 계약 축하 상품권 100만원 지급</b><small>계약 완료 고객 대상 · 지급 시기와 조건은 상담 시 안내</small></div>
+    <div class="gifts" style="margin-top:16px">
+      <div class="gift g1"><span class="gi">🍷</span><b>예약 방문 시<br>고급 와인 증정</b></div>
+      <div class="gift g2"><span class="gi">🎁</span><b>계약 시<br>상품권 100만원</b></div>
+    </div>
     <div class="quick">
       <div class="agent"><div class="av">☎</div><div><b>오산헤리티지자이 현장 상담</b><span>남겨주시면 상담사가 직접 연락드립니다</span></div></div>
       <form class="lead" novalidate>
