@@ -26,7 +26,7 @@ input[type=text],input[type=tel],input[type=date],select{width:100%;font:inherit
 <a class="btn acc tel" data-w="서브링크 상담하기(자동)" id="go">📞 1688-7038 전화 연결</a>
 <a class="btn ghost" href="../reserve/">전화가 어려우면 방문·상담 예약</a>
 <div class="gift">🍷 예약 방문 시 고급 와인 증정<br>🎁 계약 시 상품권 100만원 증정</div>
-</div><p class="note" style="margin-top:18px">분양 상담전화 1688-7038 · 광고대행 제이에이치테크 · 시행사·시공사의 공식 페이지가 아닙니다.</p></div>
+</div><p class="note" style="margin-top:18px">분양 상담전화 1688-7038 · 시행 (주)양산사지구에스피씨 · 시공 GS건설(주) · 시행사·시공사의 공식 페이지가 아닙니다.</p></div>
 <script>
 const CFG={EP:"https://script.google.com/macros/s/AKfycbxWzAwM7iIVnSmjOpAm5roO4OpLE_RKDX-rBACcwdmNBoXsg8YnDLuXwXFx-otNaL97pQ/exec",SITE:"오산헤리티지자이_1551",SHOW:"1688-7038",DIAL:"1599-8954"};
 const q0=location.search;try{if(q0.length>1)sessionStorage.setItem("lp_params",q0)}catch(e){}
@@ -34,7 +34,19 @@ function P(){let q=q0;try{q=sessionStorage.getItem("lp_params")||q}catch(e){}ret
 function post(data){const p=P();const b=new URLSearchParams(Object.assign({site:CFG.SITE,
  n_keyword:p.get("n_keyword")||p.get("n_query")||"",n_media:p.get("n_media")||"",n_ad_group:p.get("n_ad_group")||"",params:p.toString(),page:location.pathname,referrer:document.referrer||""},data));
  if(!(navigator.sendBeacon&&navigator.sendBeacon(CFG.EP,b)))fetch(CFG.EP,{method:"POST",mode:"no-cors",keepalive:true,body:b});}
-document.querySelectorAll(".tel").forEach(a=>{a.href="tel:"+CFG.DIAL.replace(/\D/g,"");a.addEventListener("click",()=>post({event:"call_click",phone_shown:CFG.SHOW,phone_dial:CFG.DIAL,where:a.dataset.w||"서브페이지"}))});
+document.querySelectorAll(".tel").forEach(a=>{a.href="tel:"+CFG.DIAL.replace(/\D/g,"");a.addEventListener("click",()=>post({event:"call_click",phone_shown:CFG.SHOW,phone_dial:CFG.DIAL,where:(a.dataset.w==="서브링크 상담하기(자동)"?"서브링크 → 전화 버튼 직접 누름":(a.dataset.w||"서브페이지"))}))});
 
-setTimeout(()=>{post({event:"call_click",phone_shown:CFG.SHOW,phone_dial:CFG.DIAL,where:"서브링크 상담하기(자동)"});location.href="tel:"+CFG.DIAL.replace(/\D/g,"")},350);
+const MOBILE=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+if(MOBILE){
+  /* 휴대폰: 전화 화면을 자동으로 띄움 (통화 버튼은 손님이 직접 눌러야 함) */
+  setTimeout(()=>{post({event:"call_click",phone_shown:CFG.SHOW,phone_dial:CFG.DIAL,where:"서브링크 상담하기 → 전화화면 열림(통화 여부 미확인)"});location.href="tel:"+CFG.DIAL.replace(/\D/g,"")},350);
+}else{
+  /* PC: 전화 연결이 안 되므로 자동 발신 대신 안내 */
+  post({event:"call_click",phone_shown:CFG.SHOW,phone_dial:CFG.DIAL,where:"PC에서 상담하기 클릭(PC는 전화 연결 안 됨)"});
+  const h=document.querySelector("h1");if(h)h.textContent="분양 상담 안내";const sb=document.querySelector(".sub");if(sb)sb.style.display="none";
+  document.querySelectorAll(".tel").forEach(a=>a.dataset.w="PC 전화버튼");
+  const n=document.createElement("p");n.style.cssText="margin:14px 0;padding:12px;border-radius:10px;background:#fff4d6;color:#5a4300;font-weight:700;font-size:15px;line-height:1.5";
+  n.innerHTML="PC에서는 전화가 바로 연결되지 않습니다.<br>휴대폰으로 <b>"+CFG.SHOW+"</b> 으로 전화하시거나, 아래 <b>방문·상담 예약</b>을 남겨주세요.";
+  const go=document.getElementById("go");go.parentNode.insertBefore(n,go);
+}
 </script></body></html>
